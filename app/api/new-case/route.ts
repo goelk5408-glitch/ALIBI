@@ -6,6 +6,15 @@ import { generateCasePrompt } from '@/lib/prompts';
 import { caseStore } from '@/lib/caseStore';
 import { callGeminiWithRetry } from '@/lib/geminiHelper';
 
+import { callGeminiWithFallback } from '@/lib/geminiFallback';
+
+const FALLBACK_MODELS = [
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+  'gemini-1.5-flash',
+  'gemini-3.8-flash',
+];
+
 export async function POST(request: Request) {
   try {
     const { difficulty } = (await request.json()) as { difficulty?: 'Easy' | 'Medium' | 'Hard' };
@@ -18,9 +27,9 @@ export async function POST(request: Request) {
     const genAI = new GoogleGenAI({ apiKey });
     const prompt = generateCasePrompt(difficulty);
 
-    const askGemini = async () => {
+    const askGemini = async (model: string) => {
       const result = await genAI.models.generateContent({
-        model: 'gemini-3.8-flash',
+        model,
         contents: prompt,
       });
       const text = result.text ?? '';
@@ -28,7 +37,7 @@ export async function POST(request: Request) {
       return JSON.parse(cleaned);
     };
 
-    const rawCase = await callGeminiWithRetry(askGemini, 3, 500);
+    const rawCase = await callGeminiWithFallback(FALLBACK_MODELS, askGemini);
     const parseResult = CaseSchema.safeParse(rawCase);
     if (!parseResult.success) {
       return NextResponse.json({ error: 'Failed to generate a valid case schema' }, { status: 500 });

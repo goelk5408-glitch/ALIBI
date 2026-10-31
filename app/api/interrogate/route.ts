@@ -5,6 +5,15 @@ import { generateSuspectPrompt } from '@/lib/prompts';
 import { callGeminiWithRetry } from '@/lib/geminiHelper';
 import type { FullCase } from '@/lib/caseSchema';
 
+import { callGeminiWithFallback } from '@/lib/geminiFallback';
+
+const FALLBACK_MODELS = [
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+  'gemini-1.5-flash',
+  'gemini-3.8-flash',
+];
+
 export async function POST(request: NextRequest) {
   try {
     const { suspectId, message, chatHistory, sessionId: bodySessionId } = (await request.json()) as {
@@ -42,9 +51,9 @@ export async function POST(request: NextRequest) {
     const conversationParts = recent.map((msg) => `${msg.role === 'assistant' ? suspect.name : 'Detective'}: ${msg.content}`).join('\n');
     const promptWithHistory = `${conversationParts ? conversationParts + '\n' : ''}Detective: ${message}\n${suspect.name}:`;
 
-    const result = await callGeminiWithRetry(() =>
+    const result = await callGeminiWithFallback(FALLBACK_MODELS, (model) =>
       genAI.models.generateContent({
-        model: 'gemini-3.8-flash',
+        model,
         contents: promptWithHistory,
         config: {
           systemInstruction: systemPrompt,
