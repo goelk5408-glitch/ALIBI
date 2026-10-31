@@ -114,12 +114,20 @@ export default function InterrogationPage() {
             </li>
           ))}
         </ul>
-        <button
-          onClick={() => router.push("/briefing")}
-          className="mt-4 px-4 py-2 bg-green-700 hover:bg-green-600 rounded"
-        >
-          Back to Briefing
-        </button>
+        <div className="flex gap-4 mt-6">
+          <button
+            onClick={() => router.push("/briefing")}
+            className="px-4 py-2 border border-green-600 hover:bg-green-950/40 rounded transition"
+          >
+            ← Back to Briefing
+          </button>
+          <button
+            onClick={() => router.push("/accusation")}
+            className="px-6 py-2 bg-red-700 hover:bg-red-600 text-white font-bold rounded shadow transition"
+          >
+            🚨 Make Accusation
+          </button>
+        </div>
       </div>
     );
   }
