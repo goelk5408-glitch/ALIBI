@@ -36,18 +36,15 @@ export async function POST(request: NextRequest) {
     const genAI = new GoogleGenAI({ apiKey });
     const systemPrompt = generateSuspectPrompt(suspect);
 
-    // Build conversation: system instruction + recent chat + new user message
-    const recent = chatHistory.slice(-12);
-    const conversationParts = recent.map((msg) => ({
-      role: msg.role === 'assistant' ? 'model' as const : 'user' as const,
-      parts: [{ text: msg.content }],
-    }));
-    conversationParts.push({ role: 'user' as const, parts: [{ text: message }] });
+    // Format messages for Gemini SDK:
+    // SDK expects content as string or array of parts
+    const conversationParts = recent.map((msg) => `${msg.role === 'assistant' ? suspect.name : 'Detective'}: ${msg.content}`).join('\n');
+    const promptWithHistory = `${conversationParts ? conversationParts + '\n' : ''}Detective: ${message}\n${suspect.name}:`;
 
     const result = await callGeminiWithRetry(() =>
       genAI.models.generateContent({
         model: 'gemini-3.8-flash',
-        contents: conversationParts,
+        contents: promptWithHistory,
         config: {
           systemInstruction: systemPrompt,
         },

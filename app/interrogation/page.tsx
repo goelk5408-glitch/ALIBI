@@ -71,14 +71,17 @@ export default function InterrogationPage() {
           chatHistory: [...chatHistory, userMsg],
         }),
       });
-      if (!res.ok) throw new Error("Interrogate failed");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Interrogate failed");
+      }
       const data = await res.json();
       const assistantMsg: Message = { role: "assistant", content: data.reply ?? "" };
       setChatHistory((prev) => [...prev, assistantMsg]);
       incrementQuestionCount();
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      setError("Failed to get a response. Try again.");
+      setError(e.message || "Failed to get a response. Try again.");
     } finally {
       setLoading(false);
     }
