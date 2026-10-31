@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+html, body, #__next {
+  @apply bg-black text-green-500 font-mono h-full min-h-screen;
+}
+
+/* CRT scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 1px,
+    rgba(0,0,0,0.1) 1px,
+    rgba(0,0,0,0.1) 2px
+  );
+  animation: scanline 3s linear infinite;
+  opacity: 0.2;
+}
