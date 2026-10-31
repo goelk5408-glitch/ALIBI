@@ -128,8 +128,22 @@ export default function InterrogationPage() {
 
   return (
     <div className="flex flex-col h-screen bg-black text-green-500 font-mono">
-      <header className="p-4 border-b border-green-600">
-        <h2 className="text-xl">Interrogating: {suspect?.name} ({suspect?.role})</h2>
+      <header className="p-4 border-b border-green-600 flex justify-between items-center">
+        <div>
+          <h2 className="text-xl font-bold">Interrogating: {suspect?.name} ({suspect?.role})</h2>
+          <button
+            onClick={() => setSelectedSuspectId(null)}
+            className="text-xs text-green-400 underline hover:text-green-300 mt-1"
+          >
+            ← Switch Suspect
+          </button>
+        </div>
+        <button
+          onClick={() => router.push("/accusation")}
+          className="px-4 py-2 bg-red-700 hover:bg-red-600 text-white font-bold rounded shadow transition text-sm animate-pulse"
+        >
+          🚨 MAKE ACCUSATION
+        </button>
       </header>
       <main className="flex-1 overflow-y-auto p-4" id="chat-area">
         {chatHistory.map((msg, i) => (
