@@ -8,10 +8,12 @@ type AccusationPayload = {
   contradictionIds: [string, string]; // note IDs selected as key contradiction
   questionCount?: number; // optional, from client
   attemptNumber?: number; // optional, from client
+  sessionId?: string;
 };
 
 export async function POST(request: NextRequest) {
-  const sessionId = request.cookies.get('sessionId')?.value;
+  const body = (await request.json()) as AccusationPayload;
+  const sessionId = request.cookies.get('sessionId')?.value || body.sessionId;
   if (!sessionId) {
     return NextResponse.json({ error: 'Missing session' }, { status: 400 });
   }

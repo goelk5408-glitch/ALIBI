@@ -62,10 +62,12 @@ export default function InterrogationPage() {
     setLoading(true);
     setError("");
     try {
+      const sessionId = typeof window !== "undefined" ? sessionStorage.getItem("sessionId") : null;
       const res = await fetch("/api/interrogate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          sessionId,
           suspectId: selectedSuspectId,
           message: userMsg.content,
           chatHistory: [...chatHistory, userMsg],

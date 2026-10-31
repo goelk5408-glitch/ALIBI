@@ -64,7 +64,9 @@ export default function AccusationPage() {
     setLoading(true);
     setError("");
     try {
+      const sessionId = typeof window !== "undefined" ? sessionStorage.getItem("sessionId") : null;
       const payload = {
+        sessionId,
         culpritId: selectedCulpritId,
         motive,
         contradictionIds: selectedContradiction,

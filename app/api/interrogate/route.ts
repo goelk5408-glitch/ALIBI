@@ -7,13 +7,14 @@ import type { FullCase } from '@/lib/caseSchema';
 
 export async function POST(request: NextRequest) {
   try {
-    const { suspectId, message, chatHistory } = (await request.json()) as {
+    const { suspectId, message, chatHistory, sessionId: bodySessionId } = (await request.json()) as {
       suspectId: string;
       message: string;
       chatHistory: { role: 'user' | 'assistant'; content: string }[];
+      sessionId?: string;
     };
 
-    const sessionId = request.cookies.get('sessionId')?.value;
+    const sessionId = request.cookies.get('sessionId')?.value || bodySessionId;
     if (!sessionId) {
       return NextResponse.json({ error: 'Missing session' }, { status: 400 });
     }
