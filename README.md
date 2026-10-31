@@ -50,8 +50,8 @@ In **ALIBI**, you assume the role of an investigator assigned to solve an unsolv
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/<your-username>/alibi.git
-   cd alibi
+   git clone https://github.com/goelk5408-glitch/alibi-detective.git
+   cd alibi-detective
    ```
 
 2. **Install dependencies:**
